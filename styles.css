@@ -1,0 +1,52 @@
+body {background-color: black;
+    max-width: 500px;
+    margin: auto;
+}
+
+h1 {
+    color: wheat;
+}
+
+.text {
+    color: wheat;
+    font-size: large;
+}
+
+audio
+{
+    height:100px;
+    width:450px;
+}
+
+.button{
+    height:50px;
+    width:150px;
+    color: blue;
+    font-size: large;
+}
+
+.emotion_dropdown{
+    height:50px;
+    width:200px;
+    font-size: large;
+}
+
+.cur_idx{
+    color: wheat;
+}
+
+#emotion_radio_button {
+    color: wheat;
+}
+
+input[type='radio'] { 
+    transform: scale(1.5);
+}
+
+input[type='file'] { 
+    color: wheat
+}
+
+a {
+    color: wheat;
+}

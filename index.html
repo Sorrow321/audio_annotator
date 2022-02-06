@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+
+  <body>
+    <h1>Audio classification annotator</h1>
+
+    <div class="text">Listen to the audio and select the correct label.</div><br>
+
+    <div class="cur_idx"></div>
+    <audio controls class="current_audio"  type="audio/wav">
+      Your browser does not support the audio element.
+    </audio><br><br><br>
+
+    <form id="emotion_radio_button">
+      <input type="radio" id="radio0" name="label" value=0 checked="checked">Class 0
+      <input type="radio" id="radio1" name="label" value=1>Class 1
+      <input type="radio" id="radio2" name="label" value=2>Class 2  
+      <input type="radio" id="radio3" name="label" value=3>Class 3
+      <input type="radio" id="radio4" name="label" value=4>Class 4
+      <input type="radio" id="radio5" name="label" value=5>Class 5  
+      <input type="radio" id="radio6" name="label" value=6>Class 6
+    </form>
+
+    <br><br>
+
+    <button name="backbut" class="button" onclick="clickedBack()" disabled>Go back</button>
+    <button class="button" onclick="clickedSubmitLabel()" disabled>Submit</button>
+    <button name="nextbut" class="button" onclick="clickedNext()" disabled>Next</button>
+    <br><br><br><br>
+    <input type="file" id="fileElementId" multiple/>
+    <button class="button" onclick="loadFiles(this)">Load files</button>
+
+    <script>
+      let audio_files = []
+      let labels_list = []
+      let cur_idx = 0
+      
+      function setTrack(id) {
+        for (let i = 0; i < 7; i++) {
+          document.getElementById("radio"+i.toString()).checked = false;
+        }
+
+        if (labels_list[cur_idx] != undefined) {
+          prev_selected_idx = labels_list[cur_idx][1]
+          document.getElementById("radio"+prev_selected_idx).checked = true;
+        }
+        elem = document.getElementsByClassName("current_audio").item(0)
+        elem.src = 'input/' + audio_files[id];
+        elem.load();
+        document.getElementsByClassName("cur_idx").item(0).innerHTML = 'Current sample: ' + (cur_idx + 1).toString() + '/' + audio_files.length.toString()
+      }
+
+      function clickedSubmitLabel() {
+        selected_class = document.querySelector('input[name="label"]:checked').value;
+        selected_audio = document.getElementsByClassName("current_audio").item(0).getAttribute('src')
+        labels_list[cur_idx] = [selected_audio, selected_class]
+        a = document.getElementsByTagName("a")[0]
+        a.href = "data:text/plain;base64," + btoa(JSON.stringify(labels_list));
+      }
+
+      function clickedNext() {
+          if(cur_idx == audio_files.length - 1) {
+            return;
+          }
+        cur_idx += 1
+        setTrack(cur_idx);
+      }
+
+      function clickedBack() {
+        if (cur_idx == 0) {
+          return;
+        }
+        cur_idx -= 1
+        setTrack(cur_idx)
+      }
+
+      function loadFiles(el) {
+        audio_files = []
+        cur_idx = 0
+        selected_files = document.getElementById("fileElementId").files
+        console.log(typeof(selected_files))
+        for (let i=0, l=selected_files.length; i<l; i++) {
+          audio_files.push(selected_files[i].name)
+        }
+        labels_list = Array(audio_files.length);
+        setTrack(0);
+
+        buttons = document.getElementsByClassName("button")
+        for(let i=0; i<buttons.length; i++) {
+          buttons[i].disabled = false
+        }
+
+        document.getElementById("fileElementId").remove()
+        el.remove()
+
+        var a = document.body.appendChild(
+            document.createElement("a")
+        );
+        a.download = "labels.txt";
+        a.innerHTML = "Download the markup";
+        a.href = "data:text/plain;base64," + btoa(JSON.stringify(labels_list));
+      }
+
+    </script>
+  </body>
+</html>
